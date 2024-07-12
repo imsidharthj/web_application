@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Information</title>
+</head>
+<body>
+    <h1>Patient Information</h1>
+    <form action="{{ url_for('newPatient') }}" method="POST">
+        <fieldset>
+            <legend>Enter your details</legend>
+            <label for="fname">Name:</label><br>
+            <input type="text" id="fname" name="name" required><br><br>
+
+            <label for="age">Age:</label><br>
+            <input type="number" id="age" name="age" required><br><br>
+
+            <label for="gender">Gender:</label><br>
+            <select id="gender" name="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select><br><br>
+
+            <label for="weight">Weight:</label><br>
+            <input type="number" id="weight" name="weight" required><br><br>
+
+            <label for="allergy">Allergy:</label><br>
+            <input type="text" id="allergy" name="allergy"><br><br>
+
+            <input type="submit" value="Submit">
+        </fieldset>
+    </form>
+</body>
+</html>

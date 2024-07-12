@@ -1,0 +1,44 @@
+<!-- patients.html:
+This file will contain the HTML structure to display
+ the list of patients currently in the database.
+It will be rendered when users navigate to /patients. -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Information</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Patient Information</h1>
+        <a href="{{ url_for('newPatient') }}" class="btn btn-primary my-3">Add New Patient</a>
+        {% if patients %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Weight</th>
+                        <th>Allergy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                        <tr>
+                            <td>{{ patient.name }}</td>
+                            <td>{{ patient.age }}</td>
+                            <td>{{ patient.gender }}</td>
+                            <td>{{ patient.weight }}</td>
+                            <td>{{ patient.allergy }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No patients found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
