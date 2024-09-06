@@ -4,6 +4,8 @@ import csv
 from urllib.parse import urljoin # combine base URL with relative URLs found on the website.
 
 base_url = "https://ezra.com/conditions"
+seen_conditions = set()  # To track already fetched conditions
+
 with open('dataset.csv', mode='w', newline='') as file: # Opens a CSV file ("dataset.csv") for writing and creates a CSV writer object.
     writer = csv.writer(file)
     writer.writerow(["Name", "Description", "Category"]) # Writes the header row with column names ("Name", "Description", "Category").
@@ -14,7 +16,7 @@ with open('dataset.csv', mode='w', newline='') as file: # Opens a CSV file ("dat
             soup = BeautifulSoup(response.content, 'html.parser') # If request is successful Parses the downloaded content with BeautifulSoup.
             cards = soup.find_all('div', class_='conditions-card') # Finds all elements with class "conditions-card" (likely containing condition details).
             if not cards:
-                print("Error.")
+                print("No more condition cards found.")
                 break
             for card in cards:
                 try: 
@@ -27,7 +29,12 @@ with open('dataset.csv', mode='w', newline='') as file: # Opens a CSV file ("dat
                     category_div = card.find('div', attrs={'fs-cmsfilter-field': 'Categories'})
                     category = category_div.get_text().strip() if category_div else "No category available"
 
-                    writer.writerow([name, description_text, category])
+                    if name not in seen_conditions:
+                        seen_conditions.add(name)
+                        writer.writerow([name, description_text, category])
+                    else:
+                        print(f"Skipping duplicate condition: {name}")
+                        
                 except AttributeError as e:
                     print(f"A card was missing expected fields, skipping it. Error: {e}")
 
@@ -35,7 +42,7 @@ with open('dataset.csv', mode='w', newline='') as file: # Opens a CSV file ("dat
 
             if next_button:
                 next_page_url = next_button['href']
-                urljoin(base_url, next_page_url) # Extracts the URL for the next page using urljoin.
+                base_url = urljoin(base_url, next_page_url) # Combine base URL with the relative URL to get the full next page URL.
                 print(f"Moving to next page: {base_url}")
             else:
                 print("No more pages to scrape.")
@@ -46,11 +53,3 @@ with open('dataset.csv', mode='w', newline='') as file: # Opens a CSV file ("dat
             break
 
 print("Data extracted and saved to dataset.csv")
-
-next_button = soup.find('a', class_='w-pagination-next')
-
-if next_button:
-    next_page_url = next_button['href']
-    next_url = urljoin(base_url, next_page_url)  # Extracts the URL for the next page using urljoin
-    base_url = next_url  # Updates the base_url for the next iteration
-    print(f"Moving to next page: {base_url}")
